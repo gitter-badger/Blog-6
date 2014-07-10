@@ -1,0 +1,67 @@
+<html ng-app="project">
+<head>
+<link href="/static/bootstrap.min.css" rel="stylesheet">
+<script src="/static/jquery.min.js"></script>
+<script src="/static/angular.min.js"></script>
+<script src="/static/ng-infinite-scroll.min.js"></script>
+
+
+
+<script>
+angular.module('project', ['infinite-scroll'])
+.controller('ColorCtrl', function($scope,$http) {
+	$scope.items = [];
+	$scope.busy = false;
+	var idx = 0;
+  	$scope.load = function(){
+		$scope.busy = true;
+		$http.get('?q='+idx).success(
+			function(data){
+				var doc = $(data);
+				doc.find('.palette')
+					.each(function( index ) {
+						var color = $( this );
+						var name = color.find('h2').text();
+						var link = color.children('a').attr('href');
+						var img = color.find('img').attr('src');
+					
+						console.log(name);
+						console.log(link);
+						console.log(img);
+						var colors = color.find('.similar a').text().split('#');
+						colors.shift()
+						console.log(colors)
+						$scope.items.push({name:name, link :link, img:img,colors:colors});
+						idx++;
+				});
+				$scope.busy = false;
+				
+			}
+		);
+	};
+});
+
+</script>
+<style>
+
+</style>
+</head>
+<body ng-controller="ColorCtrl">
+	<div infinite-scroll='load()' infinite-scroll-disabled='busy' infinite-scroll-distance='1' class='container'>
+		<div ng-repeat='item in items'>
+				<a ng-href='{{item.link}}'><h2>{{item.name}}</h2></a>
+				<img ng-src='{{item.img}}'></img>
+				<pre>/* css for {{item.link}} */
+.a{background-color:#{{item.colors[0]}}}
+.b{background-color:#{{item.colors[1]}}}
+.c{background-color:#{{item.colors[2]}}}
+.d{background-color:#{{item.colors[3]}}}
+.e{background-color:#{{item.colors[4]}}}
+.f{background-color:#{{item.colors[5]}}}
+</pre>
+			<div style='clear:both'></div>
+		</div>
+	
+	</div>
+</body>
+</html>
