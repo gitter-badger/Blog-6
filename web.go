@@ -30,7 +30,7 @@ func resume(w http.ResponseWriter, r *http.Request) {
 func designSeeds(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
 	if q == "" {
-		http.ServeFile(w, r, "designBrowser/index.html")
+		http.ServeFile(w, r, "static/colors/index.html")
 	} else {
 		designBrowser.GetMore(w, r, q)
 	}
